@@ -37,13 +37,13 @@ namespace Ave.Extensions.Functional
 		public static Maybe<T> None => new Maybe<T>();
 
 		public bool HasValue => _hasValue;
-		public bool HasNoValue => !HasValue;
+		public bool HasNoValue => !_hasValue;
 
 		public static implicit operator Maybe<T>(T value)
 		{
-			if (value is Maybe<T> m)
+			if (value is Maybe<T> valueAsMaybe)
 			{
-				return m;
+				return valueAsMaybe;
 			}
 
 			return Maybe.From(value);
@@ -125,7 +125,7 @@ namespace Ave.Extensions.Functional
 		public override string ToString()
 		{
 			if (HasNoValue)
-				return "No value";
+				return "(No Value)";
 
 			return _value.ToString();
 		}

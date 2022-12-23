@@ -31,7 +31,7 @@ namespace UnitTests.Ave.Functional
             act.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = "E-0003: Creating an error without a message should fail")]
+        [Fact(DisplayName = "E-0003: Creating an error with an empty message should fail")]
         public void E0003()
         {
             // arrange
