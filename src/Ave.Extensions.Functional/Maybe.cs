@@ -5,7 +5,6 @@ namespace Ave.Extensions.Functional
 {
 	public readonly struct Maybe<T> : IEquatable<Maybe<T>>, IEquatable<object>
 	{
-
 		private readonly bool _hasValue;
 		private readonly T _value;
 
