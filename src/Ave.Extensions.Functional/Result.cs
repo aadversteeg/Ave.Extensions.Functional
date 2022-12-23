@@ -5,7 +5,7 @@ namespace Ave.Extensions.Functional
 {
 	public class Result
 	{
-		private IReadOnlyCollection<Error> _errors;
+		private readonly IReadOnlyCollection<Error> _errors;
 
 		internal Result(IReadOnlyCollection<Error> errors) {
 			_errors = errors;
@@ -17,11 +17,14 @@ namespace Ave.Extensions.Functional
 
 		public IReadOnlyCollection<Error> Errors 
 		{ 
-			get { 
-				if(Errors == null)
+			get 
+			{ 
+
+				if(_errors == null)
 				{
 					throw new InvalidOperationException();
 				}
+
 				return _errors; 
 			} 
 		}
