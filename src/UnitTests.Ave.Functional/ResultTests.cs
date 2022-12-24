@@ -7,41 +7,13 @@ namespace UnitTests.Ave.Functional
 {
 	public class ResultTests
 	{
-		[Fact(DisplayName = "R-0001: Success should return result indicating success.")]
-		public void R0001()
-		{
-			// arrange
-
-			// act
-			var result = Result.Success();
-
-			// assert
-			result.IsSuccess.Should().BeTrue();
-			result.IsFailure.Should().BeFalse();
-		}
-
-		[Fact(DisplayName = "R-0002: Failure should return result indicating failure with cause of failure.")]
+		[Fact(DisplayName = "R-0001: Success with a value should return result indicating success with value.")]
 		public void R0002()
 		{
 			// arrange
-			var error = new Error("code", "message");
 
 			// act
-			var result = Result.Failure(error);
-
-			// assert
-			result.IsSuccess.Should().BeFalse();
-			result.IsFailure.Should().BeTrue();
-			// result.Errors.Should().BeEquivalentTo(new[] { new Error("code", "message") });
-		}
-
-		[Fact(DisplayName = "R-0003: Success with a value should return result indicating success with value.")]
-		public void R0003()
-		{
-			// arrange
-
-			// act
-			var result = Result.Success(42);
+			var result = Result<int, string>.Success(42);
 
 			// assert
 			result.IsSuccess.Should().BeTrue();
@@ -50,56 +22,41 @@ namespace UnitTests.Ave.Functional
 		}
 
 		[Fact(DisplayName = "R-0004: Failure for a certain type of value should return result indicating failure with cause of failure.")]
-		public void R0004()
+		public void R0003()
 		{
 			// arrange
-			var error = new Error("code", "message");
 
 			// act
-			var result = Result<int>.Failure(error);
+			var result = Result<int, string>.Failure("some error");
 
 			// assert
 			result.IsSuccess.Should().BeFalse();
 			result.IsFailure.Should().BeTrue();
-	        result.Errors.Should().BeEquivalentTo( new[] { new Error("code", "message") });
+			result.Error.Should().Be("some error");
 		}
 
 
 		[Fact(DisplayName = "R-0005: Getting value on result indicating failure should fail.")]
-		public void R0005()
+		public void R0004()
 		{
 			// arrange
-			var error = new Error("code", "message");
 
 			// act
-			var result = Result<int>.Failure(error);
+			var result = Result<int, string>.Failure("some error");
 			var act = () => result.Value;
 
 			// assert
 			act.Should().Throw<InvalidOperationException>();
 		}
 
-		[Fact(DisplayName = "R-0006: Getting errors on result indicating success should fail.")]
-		public void R0006()
-		{
-			// arrange
-
-			// act
-			var result = Result.Success();
-			var act = () => result.Errors;
-
-			// assert
-			act.Should().Throw<InvalidOperationException>();
-		}
-
 		[Fact(DisplayName = "R-0007: Getting errors on result indicating success with a value should fail.")]
-		public void R0007()
+		public void R0005()
 		{
 			// arrange
 
 			// act
-			var result = Result.Success(42);
-			var act = () => result.Errors;
+			var result = Result<int, string>.Success(42);
+			var act = () => result.Error;
 
 			// assert
 			act.Should().Throw<InvalidOperationException>();

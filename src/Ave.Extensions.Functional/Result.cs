@@ -1,77 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Ave.Extensions.Functional
 {
-	public class Result
+	public struct Result<T,E>
 	{
-		private readonly IReadOnlyCollection<Error> _errors;
+		private readonly bool _isSuccess;
+		private readonly E _error;
+		private readonly T _value;
 
-		internal Result(IReadOnlyCollection<Error> errors) {
-			_errors = errors;
+		private Result(bool isSuccess, T value, E error)
+		{
+			_isSuccess = isSuccess;
+			_value = value;
+			_error = error;
 		}
 
-		public bool IsSuccess => _errors == null;
+		public bool IsSuccess => _isSuccess;
 
-		public bool IsFailure => _errors != null;
+		public bool IsFailure => !_isSuccess;
 
-		public IReadOnlyCollection<Error> Errors 
+		public E Error
 		{ 
 			get 
 			{ 
-
-				if(_errors == null)
+				if(_isSuccess)
 				{
 					throw new InvalidOperationException();
 				}
 
-				return _errors; 
+				return _error; 
 			} 
-		}
-
-		public static Result Success()
-		{
-			return new Result(null);
-		}
-
-		public static Result<T> Success<T>(T value)
-		{
-			return new Result<T>(value);
-		}
-
-		public static Result Failure(IReadOnlyCollection<Error> errors)
-		{
-			return new Result(errors);
-		}
-
-		public static Result Failure(Error error)
-		{
-			return new Result(new[] { error } );
-		}
-	}
-
-
-	public class Result<T> : Result
-	{
-		private readonly T _value;
-
-		internal Result(T value)	
-			: base(null)
-		{
-			_value = value;
-		}
-
-		private Result(IReadOnlyCollection<Error> errors)
-	        : base( errors)
-		{
-			_value = default(T);
 		}
 
 		public T Value
 		{
 			get
 			{
-				if (IsFailure)
+				if (!_isSuccess)
 				{
 					throw new InvalidOperationException();
 				}
@@ -80,19 +45,14 @@ namespace Ave.Extensions.Functional
 			}
 		}
 
-		public static Result<T> Success(T value)
+		public static Result<T,E> Success(T value)
 		{
-			return new Result<T>(value);
+			return new Result<T,E>(true, value, default);
 		}
 
-		public static new Result<T> Failure(Error error)
+		public static Result<T,E> Failure(E error)
 		{
-			return new Result<T>(new[] { error });
-		}
-
-		public static new Result<T> Failure(IReadOnlyCollection<Error> errors)
-		{
-			return new Result<T>(errors);
+			return new Result<T,E>(false, default, error);
 		}
 	}
 }
