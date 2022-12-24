@@ -6,13 +6,14 @@ trigger:
 variables:
   BuildConfiguration: 'Release'
   PackageVersion: $[replace(variables['Build.SourceBranch'], 'refs/tags/v', '')]
-  PackageName: Ave.Extensions.Console.StateManagement
+  PackageName: Ave.Extensions.Functional
 
 stages:
   - stage: Build
     jobs:
       - job: Build
-        pool: Hosted Windows 2019 with VS2019
+        pool: 
+          vmImage: windows-latest
         steps:
 
         - task: DotNetCoreCLI@2
@@ -49,7 +50,8 @@ stages:
   - stage: Publish
     jobs:
       - job: Publish
-        pool: Hosted Windows 2019 with VS2019
+        pool: 
+          vmImage: windows-latest
         steps:
         - script: echo $(PackageVersion)
         - checkout: none
