@@ -1,5 +1,5 @@
 ﻿using Ave.Extensions.Functional;
-using Ave.Extensions.Functional.FluentAssertions;
+using FluentAssertions;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,7 +21,7 @@ namespace UnitTests.Ave.Functional
 			var matchResult = result.Match(onSuccess, onFailure);
 
 			// assert
-			matchResult.Should().SucceedWith("42");
+			matchResult.Should().Be("42");
 		}
 
 		[Fact(DisplayName = "RME-0002: If result indicates failure, the error should be mapped using onError.")]
@@ -37,7 +37,7 @@ namespace UnitTests.Ave.Functional
 			var matchResult = result.Match(onSuccess, onFailure);
 
 			// assert
-			matchResult.Should().SucceedWith("<something failed>");
+			matchResult.Should().Be("<something failed>");
 		}
 
 		[Fact(DisplayName = "RME-0003: If result indicates success, the value should be mapped using onSuccess.")]
@@ -53,7 +53,7 @@ namespace UnitTests.Ave.Functional
 			var matchResult = await result.Match(onSuccess, onFailure);
 
 			// assert
-			matchResult.Should().SucceedWith("42");
+			matchResult.Should().Be("42");
 		}
 
 		[Fact(DisplayName = "RME-0004: If result indicates failure, the error should be mapped using onError.")]
@@ -69,7 +69,8 @@ namespace UnitTests.Ave.Functional
 			var matchResult = await result.Match(onSuccess, onFailure);
 
 			// assert
-			matchResult.Should().SucceedWith("<something failed>");
+			matchResult.Should().Be("<something failed>");
+
 		}
 	}
 }
