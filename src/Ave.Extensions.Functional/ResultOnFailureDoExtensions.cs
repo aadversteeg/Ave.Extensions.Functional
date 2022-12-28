@@ -30,7 +30,7 @@ namespace Ave.Extensions.Functional
 		{
 			if (source.IsFailure)
 			{
-				await awaitableAction(source.Error);
+				await awaitableAction(source.Error).ConfigureAwait(false);
 			}
 
 			return source;

@@ -28,7 +28,7 @@ namespace Ave.Extensions.Functional
 		{
 			if (source.IsFailure)
 			{
-				return Result<T, Eout>.Failure(await mapError(source.Error));
+				return Result<T, Eout>.Failure(await mapError(source.Error).ConfigureAwait(false));
 			}
 			return Result<T, Eout>.Success(source.Value);
 		}
@@ -38,7 +38,7 @@ namespace Ave.Extensions.Functional
 			var source = await awaitableSource.ConfigureAwait(false);
 			if (source.IsFailure)
 			{
-				return Result<T, Eout>.Failure(await mapError(source.Error));
+				return Result<T, Eout>.Failure(await mapError(source.Error).ConfigureAwait(false));
 			}
 			return Result<T, Eout>.Success(source.Value);
 		}

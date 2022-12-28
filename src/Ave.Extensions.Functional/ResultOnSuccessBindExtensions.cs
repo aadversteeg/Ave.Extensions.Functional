@@ -38,7 +38,7 @@ namespace Ave.Extensions.Functional
 			var source = await awaitableSource.ConfigureAwait(false);
 			if (source.IsSuccess)
 			{
-				return await awaitableBind(source.Value);
+				return await awaitableBind(source.Value).ConfigureAwait(false);
 			}
 			return Result<Tout, E>.Failure(source.Error);
 		}

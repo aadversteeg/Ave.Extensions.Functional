@@ -29,7 +29,7 @@ namespace Ave.Extensions.Functional
 		{
 			if (source.IsSuccess)
 			{
-				return Result<Tout, E>.Success(await map(source.Value));
+				return Result<Tout, E>.Success(await map(source.Value).ConfigureAwait(false));
 			}
 			return Result<Tout, E>.Failure(source.Error);
 		}
@@ -40,7 +40,7 @@ namespace Ave.Extensions.Functional
 
 			if (source.IsSuccess)
 			{
-				return Result<Tout, E>.Success(await map(source.Value));
+				return Result<Tout, E>.Success(await map(source.Value).ConfigureAwait(false));
 			}
 			return Result<Tout, E>.Failure(source.Error);
 		}

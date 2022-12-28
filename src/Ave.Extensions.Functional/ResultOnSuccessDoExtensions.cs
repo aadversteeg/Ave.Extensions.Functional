@@ -17,7 +17,7 @@ namespace Ave.Extensions.Functional
 
 		public static async Task<Result<Tin, E>> OnSuccessDo<Tin, E>(this Task<Result<Tin, E>> awaitableSource, Action<Tin> action)
 		{
-            var source = await awaitableSource;
+            var source = await awaitableSource.ConfigureAwait(false);
 			if (source.IsSuccess)
 			{
 				action(source.Value);
@@ -30,7 +30,7 @@ namespace Ave.Extensions.Functional
 		{
 			if (source.IsSuccess)
 			{
-				await awaitableAction(source.Value);
+				await awaitableAction(source.Value).ConfigureAwait(false);
 			}
 
 			return source;
@@ -41,7 +41,7 @@ namespace Ave.Extensions.Functional
 			var source = await awaitableSource;
 			if (source.IsSuccess)
 			{
-				await awaitableAction(source.Value);
+				await awaitableAction(source.Value).ConfigureAwait(false);
 			}
 
 			return source;
