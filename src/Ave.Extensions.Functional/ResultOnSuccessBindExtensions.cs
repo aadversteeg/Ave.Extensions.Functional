@@ -23,5 +23,24 @@ namespace Ave.Extensions.Functional
 			}
 			return Result<Tout, E>.Failure(source.Error);
 		}
+
+		public static async Task<Result<Tout, E>> OnSuccessBind<Tin, Tout, E>(this Result<Tin, E> source, Func<Tin, Task<Result<Tout, E>>> awaitableBind)
+		{
+			if (source.IsSuccess)
+			{
+				return await awaitableBind(source.Value).ConfigureAwait(false);
+			}
+			return Result<Tout, E>.Failure(source.Error);
+		}
+
+		public static async Task<Result<Tout, E>> OnSuccessBind<Tin, Tout, E>(this Task<Result<Tin, E>> awaitableSource, Func<Tin, Task<Result<Tout, E>>> awaitableBind)
+		{
+			var source = await awaitableSource.ConfigureAwait(false);
+			if (source.IsSuccess)
+			{
+				return await awaitableBind(source.Value);
+			}
+			return Result<Tout, E>.Failure(source.Error);
+		}
 	}
 }

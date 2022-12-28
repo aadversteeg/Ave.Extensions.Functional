@@ -25,5 +25,26 @@ namespace Ave.Extensions.Functional
 
 			return source;
 		}
+
+		public static async Task<Result<Tin, E>> OnSuccessDo<Tin, E>(this Result<Tin, E> source, Func<Tin,Task> awaitableAction)
+		{
+			if (source.IsSuccess)
+			{
+				await awaitableAction(source.Value);
+			}
+
+			return source;
+		}
+
+		public static async Task<Result<Tin, E>> OnSuccessDo<Tin, E>(this Task<Result<Tin, E>> awaitableSource, Func<Tin, Task> awaitableAction)
+		{
+			var source = await awaitableSource;
+			if (source.IsSuccess)
+			{
+				await awaitableAction(source.Value);
+			}
+
+			return source;
+		}
 	}
 }

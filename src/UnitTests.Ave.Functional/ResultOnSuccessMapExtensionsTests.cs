@@ -1,6 +1,8 @@
 ﻿using Ave.Extensions.Functional;
 using Ave.Extensions.Functional.FluentAssertions;
 using FluentAssertions;
+using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,9 +15,11 @@ namespace UnitTests.Ave.Functional
 		{
 			// arrange
 			var result = Result<int, string>.Success(42);
+			Func<int, string> map = (s) => s.ToString();
 
 			// act
-			var mappedResult = result.OnSuccessMap((s) => s.ToString());
+
+			var mappedResult = result.OnSuccessMap(map);
 
 			// assert
 			mappedResult.Should().SucceedWith("42");
@@ -26,9 +30,10 @@ namespace UnitTests.Ave.Functional
         {
             // arrange
             var result = Result<int, string>.Failure("something failed");
+			Func<int, string> map = (s) => s.ToString();
 
-            // act
-            var mappedResult = result.OnSuccessMap((s) => s.ToString());
+			// act
+			var mappedResult = result.OnSuccessMap(map);
 
             // assert
             mappedResult.Should().FailWith("something failed");
@@ -39,9 +44,10 @@ namespace UnitTests.Ave.Functional
 		{
 			// arrange
 			var result = Task.FromResult( Result<int, string>.Success(42));
+			Func<int, string> map = (s) => s.ToString();
 
 			// act
-			var mappedResult = await result.OnSuccessMap((s) => s.ToString());
+			var mappedResult = await result.OnSuccessMap(map);
 
 			// assert
 			mappedResult.Should().SucceedWith("42");
@@ -52,9 +58,67 @@ namespace UnitTests.Ave.Functional
 		{
 			// arrange
 			var result = Task.FromResult(Result<int, string>.Failure("something failed"));
+			Func<int, string> map = (s) => s.ToString();
 
 			// act
-			var mappedResult = await result.OnSuccessMap((s) => s.ToString());
+			var mappedResult = await result.OnSuccessMap(map);
+
+			// assert
+			mappedResult.Should().FailWith("something failed");
+		}
+
+		[Fact(DisplayName = "ROSME-0005: If result indicates success, the value should be mapped.")]
+		public async Task ROSME0005()
+		{
+			// arrange
+			var result = Result<int, string>.Success(42);
+			Func<int, Task<string>> map = (s) => Task.FromResult(s.ToString());
+
+			// act
+
+			var mappedResult = await result.OnSuccessMap(map);
+
+			// assert
+			mappedResult.Should().SucceedWith("42");
+		}
+
+		[Fact(DisplayName = "ROSME-0006: If result indicates failure, the value should not be mapped.")]
+		public async Task ROSME0006()
+		{
+			// arrange
+			var result = Result<int, string>.Failure("something failed");
+			Func<int, Task<string>> map = (s) => Task.FromResult(s.ToString());
+
+			// act
+			var mappedResult = await result.OnSuccessMap(map);
+
+			// assert
+			mappedResult.Should().FailWith("something failed");
+		}
+
+		[Fact(DisplayName = "ROSME-0007: If awaitable result indicates success, the value should be mapped.")]
+		public async Task ROSME0007()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Success(42));
+			Func<int, Task<string>> map = (s) => Task.FromResult(s.ToString());
+
+			// act
+			var mappedResult = await result.OnSuccessMap(map);
+
+			// assert
+			mappedResult.Should().SucceedWith("42");
+		}
+
+		[Fact(DisplayName = "ROSME-0008: If awaitable result indicates failure, the value should not be mapped.")]
+		public async Task ROSME0008()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Failure("something failed"));
+			Func<int, Task<string>> map = (s) => Task.FromResult(s.ToString());
+
+			// act
+			var mappedResult = await result.OnSuccessMap(map);
 
 			// assert
 			mappedResult.Should().FailWith("something failed");

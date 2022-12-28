@@ -72,5 +72,85 @@ namespace UnitTests.Ave.Functional
 			mappedResult.Should().SucceedWith(42);
 			actResult.Should().BeEmpty();
 		}
+
+		[Fact(DisplayName = "ROFDE-0005: If result indicates failure, the action should be done.")]
+		public async Task ROFDE0005()
+		{
+			// arrange
+			var result = Result<int, string>.Failure("Something failed");
+			string actResult = string.Empty;
+
+			// act
+			Func<string, Task> act = (e) =>
+			{
+				actResult = e;
+				return Task.CompletedTask;
+			};
+			var mappedResult = await result.OnFailureDo(act);
+
+			// assert
+			mappedResult.Should().FailWith("Something failed");
+			actResult.Should().Be("Something failed");
+		}
+
+		[Fact(DisplayName = "ROFDE-0006: If result indicates success, the action should not be done.")]
+		public async Task ROFDE0006()
+		{
+			// arrange
+			var result = Result<int, string>.Success(42);
+			string actResult = string.Empty;
+
+			// act
+			Func<string, Task> act = (e) =>
+			{
+				actResult = e;
+				return Task.CompletedTask;
+			};
+			var mappedResult = await result.OnFailureDo(act);
+
+			// assert
+			mappedResult.Should().SucceedWith(42);
+			actResult.Should().BeEmpty();
+		}
+
+		[Fact(DisplayName = "ROFDE-0007: If awaitable result indicates failure, the action should be done.")]
+		public async Task ROFDE0007()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Failure("Something failed"));
+			string actResult = string.Empty;
+
+			// act
+			Func<string, Task> act = (e) =>
+			{
+				actResult = e;
+				return Task.CompletedTask;
+			};
+			var mappedResult = await result.OnFailureDo(act);
+
+			// assert
+			mappedResult.Should().FailWith("Something failed");
+			actResult.Should().Be("Something failed");
+		}
+
+		[Fact(DisplayName = "ROFDE-0008: If awaitable result indicates success, the action should not be done.")]
+		public async Task ROFDE0008()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Success(42));
+			string actResult = string.Empty;
+
+			// act
+			Func<string, Task> act = (e) =>
+			{
+				actResult = e;
+				return Task.CompletedTask;
+			};
+			var mappedResult = await result.OnFailureDo(act);
+
+			// assert
+			mappedResult.Should().SucceedWith(42);
+			actResult.Should().BeEmpty();
+		}
 	}
 }
