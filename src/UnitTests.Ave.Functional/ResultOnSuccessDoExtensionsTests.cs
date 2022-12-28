@@ -2,6 +2,7 @@
 using Ave.Extensions.Functional.FluentAssertions;
 using FluentAssertions;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests.Ave.Functional
@@ -39,5 +40,37 @@ namespace UnitTests.Ave.Functional
             mappedResult.Should().FailWith("Something failed");
             actResult.Should().Be(0);
         }
-    }
+
+		[Fact(DisplayName = "ROSDE-0003: If awaitable result indicates success, the action should be done.")]
+		public async Task ROSDE0003()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Success(42));
+			int actResult = 0;
+
+			// act
+			Action<int> act = (v) => actResult = v;
+			var mappedResult = await result.OnSuccessDo(act);
+
+			// assert
+			mappedResult.Should().SucceedWith(42);
+			actResult.Should().Be(42);
+		}
+
+		[Fact(DisplayName = "ROSDE-0004: If awaitable result indicates failure, the action should not be done.")]
+		public async Task ROSDE0004()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Failure("Something failed"));
+			int actResult = 0;
+
+			// act
+			Action<int> act = (v) => actResult = v;
+			var mappedResult = await result.OnSuccessDo(act);
+
+			// assert
+			mappedResult.Should().FailWith("Something failed");
+			actResult.Should().Be(0);
+		}
+	}
 }

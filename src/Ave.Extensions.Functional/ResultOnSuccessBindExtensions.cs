@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Ave.Extensions.Functional
 {
@@ -13,5 +13,15 @@ namespace Ave.Extensions.Functional
             }
             return Result<Tout, E>.Failure(source.Error);
         }
-    }
+
+		public static async	Task<Result<Tout, E>> OnSuccessBind<Tin, Tout, E>(this Task<Result<Tin, E>> awaitableSource, Func<Tin, Result<Tout, E>> bind)
+		{
+			var source = await awaitableSource.ConfigureAwait(false);
+			if (source.IsSuccess)
+			{
+				return bind(source.Value);
+			}
+			return Result<Tout, E>.Failure(source.Error);
+		}
+	}
 }

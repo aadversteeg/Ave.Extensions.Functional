@@ -1,6 +1,7 @@
 ﻿using Ave.Extensions.Functional;
 using Ave.Extensions.Functional.FluentAssertions;
 using FluentAssertions;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests.Ave.Functional
@@ -45,5 +46,44 @@ namespace UnitTests.Ave.Functional
             // assert
             bindResult.Should().FailWith("bind failed");
         }
-    }
+
+		[Fact(DisplayName = "ROSBE-0004: If awaitable result indicates success, the value should be bound.")]
+		public async Task ROSE0004()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Success(42));
+
+			// act
+			var bindResult = await result.OnSuccessBind((s) => Result<string, string>.Success(s.ToString()));
+
+			// assert
+			bindResult.Should().SucceedWith("42");
+		}
+
+		[Fact(DisplayName = "ROSBE-0005: If awaitable result indicates failure, the value should not be bound.")]
+		public async Task ROSBE0005()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Failure("something failed"));
+
+			// act
+			var bindResult = await result.OnSuccessBind((s) => Result<string, string>.Success(s.ToString()));
+
+			// assert
+			bindResult.Should().FailWith("something failed");
+		}
+
+		[Fact(DisplayName = "ROSBE-0006: If awaitable result indicates success, but the bind fails, the result will indicate failure.")]
+		public async Task ROSBE0006()
+		{
+			// arrange
+			var result = Task.FromResult(Result<int, string>.Success(42));
+
+			// act
+			var bindResult = await result.OnSuccessBind((s) => Result<string, string>.Failure(("bind failed")));
+			
+			// assert
+			bindResult.Should().FailWith("bind failed");
+		}
+	}
 }

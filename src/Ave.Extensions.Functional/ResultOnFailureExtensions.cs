@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Ave.Extensions.Functional
 {
@@ -12,5 +13,15 @@ namespace Ave.Extensions.Functional
             }
             return Result<T, Eout>.Success(source.Value);
         }
-    }
+
+		public static async Task<Result<T, Eout>> OnFailure<T, Ein, Eout>(this Task<Result<T, Ein>> awaitableSource, Func<Ein, Eout> mapError)
+		{
+            var source = await awaitableSource.ConfigureAwait(false);
+			if (source.IsFailure)
+			{
+				return Result<T, Eout>.Failure(mapError(source.Error));
+			}
+			return Result<T, Eout>.Success(source.Value);
+		}
+	}
 }
