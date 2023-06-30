@@ -1,7 +1,7 @@
 # Ave.Extensions.Functional
 
-Nuget package containing base classes for functional programming
+Nuget package containing extension functions for:
 
-Maybe<T>
-Result<T,E>
+- Maybe<T>
+- Result<T,E>
 

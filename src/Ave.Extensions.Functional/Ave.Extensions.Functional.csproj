@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/aadversteeg/Ave.Extensions.Functional</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ave.Extensions.Functional.Core" Version="0.0.3-beta" />
+    <PackageReference Include="Ave.Extensions.Functional.Core" Version="0.0.4-beta" />
   </ItemGroup>
 
 </Project>
